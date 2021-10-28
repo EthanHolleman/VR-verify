@@ -1,0 +1,4 @@
+blast_alignment_filters:
+  min_length: 85  # lengths slightly longer than just the homology arms aligning
+  min_pident: 95
+
