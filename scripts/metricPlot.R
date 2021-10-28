@@ -98,8 +98,18 @@ product.plot <- function(df, colors){
             x='Insert reference', 
             y='Sanger sequence alignments', 
             title='Alignment location', 
-            fill='Read name') +
-        theme(text = element_text(size=20, face='bold'))
+            fill='Read name')
+
+}
+
+phred.score.boxplot <- function(phred.df, blast.df){
+
+
+    read.name.df <- blast.df[, c('read_name', 'hash')]
+    phred.df.names <- merge(phred.df, read.name.df, by='hash')
+    
+
+
 
 }
 
@@ -119,6 +129,8 @@ main <- function(){
 
 
     metrics.filepath <- snakemake@input$metrics_table
+    phred.filepath <- snakemake@input$phred_table
+    phred.df <- read.tabular(phred.filepath)
     metrics.df <- read.tabular(metrics.filepath)
     if (nrow(metrics.df) > 0){
         colors <- plot.colors(metrics.df)
@@ -127,6 +139,7 @@ main <- function(){
         digest.plot <- plot.EcoRI.SacI.digest.expectation(metrics.df, colors, 232)
         expected.start.plot <- plot.insert.start.distance.expectation(metrics.df, colors)
         align.plot.vis <- product.plot(metrics.df, colors)
+        phred.score.boxplot(phred.df, metrics.df)
         
         align.plot.theme <- apply.plot.theme(align.plot, TRUE)
         digest.plot.theme <- apply.plot.theme(digest.plot, TRUE)

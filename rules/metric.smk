@@ -28,11 +28,23 @@ rule merge_blast_digest_files:
     script:'../scripts/concat_with_headers.py'
 
 
+rule extract_phred_scores_from_ab1_files:
+    conda:
+        '../envs/Py.yml'
+    params:
+        samples=SAMPLES
+    output:
+        'output/metrics/phred/phred-quality-scores-all-reads.tsv'
+    script:'../scripts/extract_ab1_phred.py'
+
+
+
 rule make_plots:
     conda:
         '../envs/R.yml'
     input:
-        metrics_table='output/metrics/test-digest/{insert_name}/{seq_file}/{insert_name}-{seq_file}-filtered-blast-table-with-digests.tsv'
+        metrics_table='output/metrics/test-digest/{insert_name}/{seq_file}/{insert_name}-{seq_file}-filtered-blast-table-with-digests.tsv',
+        phred_table='output/metrics/phred/phred-quality-scores-all-reads.tsv'
     output:
         png='output/metrics/plots/{insert_name}/{seq_file}/{insert_name}-{seq_file}-plots.png',
         pdf='output/metrics/plots/{insert_name}/{seq_file}/{insert_name}-{seq_file}-plots.pdf'
