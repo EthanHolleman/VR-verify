@@ -11,7 +11,7 @@ BLAST_SUFFI = [
 
 inserts = list(pd.read_csv('inserts.tsv', sep='\t')['insert_name'])
 
-print(inserts)
+
 
 wildcard_constraints:
    seqfile = '\w+'
