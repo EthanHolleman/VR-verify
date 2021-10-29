@@ -74,6 +74,6 @@ rule convert_complete_report_to_html:
     output:
         'output/report/html/complete_report.html'
     shell:'''
-    pandoc -s {input} -o {output}
+    pandoc -s --toc {input} -o {output}
     '''
 
