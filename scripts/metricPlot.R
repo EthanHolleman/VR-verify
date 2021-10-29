@@ -12,7 +12,9 @@ read.tabular <- function(metrics.table.path){
 
 apply.plot.theme <- function(plot, remove.legend=FALSE){
 
-    plot.theme <- plot + theme_pubr()
+    plot.theme <- plot + theme_pubr() + 
+                  theme(text = element_text(size=12, face='bold')) +
+                  theme(axis.text.x = element_text(angle = 45, hjust=1))
     if (remove.legend == TRUE){
         plot.theme <- plot.theme + theme(legend.position='none')
     }
@@ -45,7 +47,7 @@ plot.EcoRI.SacI.digest.expectation <- function(metrics.df, colors, expected.frag
 
 
     metrics.df$frag.length.diff <- metrics.df$EcoRI_SacI_digestion_frag_length - expected.frag.length
-    
+    metrics.df.primer <- subset(metrics.df, primer=='pFC9_t7_primer_1')
     ggplot(metrics.df, aes(x=read_name, y=frag.length.diff)) + 
         geom_segment(
             aes(x=read_name, xend=read_name, y=0, yend=frag.length.diff), color='black'
@@ -102,16 +104,28 @@ product.plot <- function(df, colors){
 
 }
 
-phred.score.boxplot <- function(phred.df, blast.df){
+phred.score.boxplot <- function(phred.df, blast.df, colors){
 
 
     read.name.df <- blast.df[, c('read_name', 'hash')]
     phred.df.names <- merge(phred.df, read.name.df, by='hash')
-    
-
-
+    ggplot(phred.df.names, aes(x=read_name, y=phred, fill=read_name)) +
+        geom_boxplot(color='black')  + scale_fill_manual(values=colors) +
+        labs(title='Mean Phred score', x='', y='Phred score')
 
 }
+
+phred.score.smooth <- function(phred.df, blast.df, colors){
+
+
+    read.name.df <- blast.df[, c('read_name', 'hash')]
+    phred.df.names <- merge(phred.df, read.name.df, by='hash')
+    ggplot(phred.df.names, aes(x=position, y=phred, color=read_name)) +
+        geom_smooth()  + scale_color_manual(values=colors)
+
+}
+
+
 
 
 
@@ -119,7 +133,7 @@ phred.score.boxplot <- function(phred.df, blast.df){
 save.plot <- function(plot, output.path){
 
 
-    ggsave(output.path, plot, dpi=600, width=10, height=10, unit='in')
+    ggsave(output.path, plot, dpi=600, width=14, height=10, unit='in')
 
 
 }
@@ -135,22 +149,30 @@ main <- function(){
     if (nrow(metrics.df) > 0){
         colors <- plot.colors(metrics.df)
 
+        # Make all plots
         align.plot <- plot.alignment.lengths(metrics.df, colors)
         digest.plot <- plot.EcoRI.SacI.digest.expectation(metrics.df, colors, 232)
         expected.start.plot <- plot.insert.start.distance.expectation(metrics.df, colors)
         align.plot.vis <- product.plot(metrics.df, colors)
-        phred.score.boxplot(phred.df, metrics.df)
+        phred.box <- phred.score.boxplot(phred.df, metrics.df, colors)
+        phred.smooth <- phred.score.smooth(phred.df, metrics.df, colors)
         
+        # Apply common plot themes 
         align.plot.theme <- apply.plot.theme(align.plot, TRUE)
         digest.plot.theme <- apply.plot.theme(digest.plot, TRUE)
         expected.start.plot.theme <- apply.plot.theme(expected.start.plot, TRUE)
+        phred.box.theme <- apply.plot.theme(phred.box, TRUE)
+        phred.smooth.theme <-  apply.plot.theme(phred.smooth)
+        align.plot.vis.thmeme <- apply.plot.theme(align.plot.vis)
         
+
         main.plot <- ggarrange(
-            ggarrange(
-                align.plot.theme, digest.plot.theme, 
-                expected.start.plot.theme, nrow=1, ncol=3),
-        align.plot.vis, nrow=2, ncol=1
-    )
+
+            ggarrange(align.plot.theme, digest.plot.theme, expected.start.plot.theme, nrow=1, ncol=3),  # top row
+            ggarrange(align.plot.vis, ggarrange(phred.box.theme, phred.smooth.theme, nrow=1, ncol=2), nrow=1, ncol=2),  # bottom row
+            nrow=2, ncol=1
+        )
+    
     }else{
         # no alignments and therefore no data to plot
         # is this what we want to do? Maybe have all blast alignments
@@ -166,8 +188,6 @@ main <- function(){
 
 }
 
-if (!interactive()){
-
+if (sys.nframe() == 0){
     main()
-
 }
