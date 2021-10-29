@@ -7,10 +7,24 @@ rule split_VR_refs:
     input:
         VR_refs='resources/VR-refs/complete_inserts.fa'
     output:
-        dynamic('output/VR-refs/split/{insert_name}.fa')
+        expand('output/VR-refs/split/{insert_name}.fa', insert_name=inserts)
     params:
         output_dir='output/VR-refs/split'
     script:'../scripts/split_VRs.py'
+
+
+rule make_inserts_list:
+    input:
+        expand('output/VR-refs/split/{insert_name}.fa', insert_name=inserts)
+    output:
+        'output/VR-refs/all-insert-names.tsv'
+    params:
+        split_dir='output/VR-refs/split'
+    shell:'''
+    echo "insert_name" > {output}
+    ls -1 {params.split_dir} | sed -e 's/\.fa$//' >> {output}
+    '''
+
 
 
 rule concat_run_fasta_files:
@@ -85,18 +99,4 @@ rule merge_header_back_in:
         'output/blast-results/with-headers/{insert_name}/{seq_file}/{insert_name}-{seq_file}.tsv'
     script:'../scripts/merge_Blast_results.py'
 
-
-# rule cat_all_merged_blast_results:
-#     input:
-#         dynamic(expand(
-#                 'output/blast-results/with-headers/{insert_name}/{seq_file}/{insert_name}-{seq_file}.tsv',
-#                 seq_file='all-runs-fasta-concat-md5', allow_missing=True
-#                 )
-#             )
-#     output:
-#         'output/blast-results/with-headers/all-results-cat.tsv'
-#     shell:'''
-#     head -2 {input[0]} > {output}
-#     tail -n +3 -q {input} >> {output}
-#     '''
 
