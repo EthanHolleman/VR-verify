@@ -2,3 +2,10 @@ blast_alignment_filters:
   min_length: 85  # lengths slightly longer than just the homology arms aligning
   min_pident: 95
 
+markdown:
+  section_template: 'resources/markdown/section_template.md'
+  intro_template: 'resources/markdown/intro_template.md'
+
+title: 'VR inserts sanger stuff'
+
+samples_table: 'samples/runs.tsv'
