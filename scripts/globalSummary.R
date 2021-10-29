@@ -57,7 +57,7 @@ plot.confidence <- function(metrics.df){
     count.reads <- count(metrics.df, 'qseqid')
     ggplot(metrics.df, aes(x=qseqid, fill=status)) + 
         geom_bar(color='black') + 
-        labs(title='Coutns of assigned confidence read contains insert by insert', x='', y='') +
+        labs(title='Counts of assigned confidence read contains insert by insert', x='', y='') +
         scale_fill_brewer(palette='Dark2')
 
 }
