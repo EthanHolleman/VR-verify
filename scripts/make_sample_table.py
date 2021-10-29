@@ -49,6 +49,7 @@ def parse_fasta_file(fasta_path):
         "fasta_path": str(fasta_path),
         "hash": str(hash(str(fasta_path))),
         "read_length": len(record),
+        "run_name": Path(fasta_path).parent.stem,
     }
 
 
