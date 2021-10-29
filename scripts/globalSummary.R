@@ -93,7 +93,8 @@ main <- function(){
 
     # arrrange plots into one plot
     main.plot <- ggarrange(
-        total.reads.plot.theme, aligned.reads.theme, confidence.plot.theme
+        ggarrange(total.reads.plot.theme, aligned.reads.theme, nrow=1, ncol=2), 
+        confidence.plot.theme, nrow=2, ncol=1
     )
     save.plot(main.plot, output)
 
