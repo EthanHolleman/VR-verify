@@ -89,7 +89,7 @@ main <- function(){
     # apply common plot themes
     total.reads.plot.theme <- apply.plot.theme(total.reads.plot, TRUE)
     aligned.reads.theme <- apply.plot.theme(aligned.reads, TRUE)
-    confidence.plot.theme <- applt.plot.theme(confidence.plot)
+    confidence.plot.theme <- apply.plot.theme(confidence.plot)
 
     # arrrange plots into one plot
     main.plot <- ggarrange(

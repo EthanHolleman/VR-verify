@@ -14,6 +14,7 @@ PRIMER_DISTS = {
     "Variable_region_insert_primer_1": 0,
     "Variable_region_insert_primer_2": 0,
     "VRI-1": 0,
+    "VRI_primer_2": 0
 }
 
 
