@@ -6,6 +6,6 @@ markdown:
   section_template: 'resources/markdown/section_template.md'
   intro_template: 'resources/markdown/intro_template.md'
 
-title: 'VR inserts sanger stuff'
+title: 'VR insert verification of T7 initiation series by Sanger sequencing: complete report'
 
 samples_table: 'samples/runs.tsv'
