@@ -39,12 +39,13 @@ def parse_run_dir_name(run_dir):
     return {"date": date}
 
 
-def parse_fasta_file(fasta_path):
+def parse_fasta_file(fasta_path, date):
     record = SeqIO.read(str(fasta_path), "fasta")
     read_name = record.description.split("_")[0].strip()
+    read_name_dated = f'{read_name}-{date}' 
     primer = record.description.split("__")[0].replace(read_name, "")[1:].strip()
     return {
-        "read_name": read_name,
+        "read_name": read_name_dated,
         "primer": primer,
         "expected_insert_distance": PRIMER_DISTS[primer],
         "fasta_path": str(fasta_path),
@@ -68,10 +69,11 @@ def parse_abi_file(abi_path):
 
 def file_pair_to_row(parent_dir, file_pair):
 
+    date = parse_run_dir_name(str(parent_dir))
     fields = [
-        parse_fasta_file(file_pair[0]),
+        parse_fasta_file(file_pair[0], date['date']),
         parse_abi_file(file_pair[1]),
-        parse_run_dir_name(str(parent_dir)),
+        date
     ]
     row = {}
     for d in fields:
@@ -84,7 +86,6 @@ def parse_all_runs(runs_parent):
     for each_run in Path(runs_parent).iterdir():
         file_pairs = get_run_pairs(each_run)
         for each_file_pair in file_pairs:
-            print(each_file_pair)
             rows.append(file_pair_to_row(each_run, each_file_pair))
 
     return pd.DataFrame(rows)

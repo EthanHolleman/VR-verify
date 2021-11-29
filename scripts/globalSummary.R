@@ -22,10 +22,12 @@ plot.number.reads.insert <- function(metrics.df, insert.names, colors){
 
     no.alignment <- insert.names[!(insert.names %in% aligned.inserts)]
     # add those that are not included
-    df.no.alignment <- data.frame(qseqid=no.alignment, freq=0)
-    all.inserts <- rbind(count.reads, df.no.alignment)
-
-    print(all.inserts)
+    if (is.null(no.alignment)){  # handle case where all inserts have aligned reads
+        df.no.alignment <- data.frame(qseqid=no.alignment, freq=0)
+        all.inserts <- rbind(count.reads, df.no.alignment)
+    }else{
+        all.inserts <- count.reads
+    }
 
     ggplot(all.inserts, aes(x=qseqid, y=freq, fill=qseqid)) +
         geom_bar(color='black', stat='identity') +

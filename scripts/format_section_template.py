@@ -33,7 +33,7 @@ def number_reads(blast_table):
 
 def make_summary_table(blast_table):
     columns = blast_table[
-        ["read_name", "run_name", "date", "read_length", "sample_well", "dye"]
+        ["read_name", "run_name", "date", "primer", "read_length", "sample_well", "dye"]
     ]
     return {"summary_table": columns.to_markdown(index=False)}
 
