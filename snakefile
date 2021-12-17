@@ -1,12 +1,9 @@
 import pandas as pd
 import os
 
-configfile: 'config.yml'
+print(config)
 
-
-
-
-SAMPLES = pd.read_csv('samples/runs.tsv', sep='\t')
+SAMPLES = pd.read_csv(config['samples_table'], sep='\t')
 
 BLAST_SUFFI = [
     'nhr'
